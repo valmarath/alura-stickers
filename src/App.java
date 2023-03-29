@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -25,8 +28,23 @@ public class App {
         //System.out.println(listaDeFilmes.get(0));
 
         // Exibir e manipular dados
+        var outputDir = new File("output/");
+        outputDir.mkdir();
+
+        var geradora = new GeradoraDeFigurinhas();
+
         for (Map<String,String> filme : listaDeFilmes) {
-            System.out.println("\u001b[44m\u001b[1mTítulo:\u001b[m " + filme.get("title"));
+            
+            String urlImage = filme.get("image");
+            String title = filme.get("title");
+            if(title.contains(":")) {
+                title = title.replace(":", "-");
+            }
+            InputStream InputStream = new URL(urlImage).openStream();
+            String fileName = "output/" + title + ".png";
+            geradora.cria(InputStream, fileName);
+            
+            System.out.println("\u001b[44m\u001b[1mTítulo:\u001b[m " + title);
             System.out.println("\u001b[34m\u001b[1mLink do Pôster:\u001b[m " + filme.get("image"));
             double classification = Double.parseDouble(filme.get("imDbRating"));
             int starNumber = (int) classification;
